@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Android Police ConvertKit for AMP</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+        }
+        #ConvertKitWrap{
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body onresize="postHeight()">
+    <div id="ConvertKitWrap">
+    </div>
+    <script>
+        let ConvertKitWrap = document.getElementById('ConvertKitWrap')
+        let observer = new MutationObserver(function (mutations, observer) {
+            postHeight()
+        });
+
+        observer.observe(ConvertKitWrap, {
+            subtree: true,
+            attributes: true
+        });
+        var post_message = {
+            sentinel: 'amp',
+            type: 'embed-size',
+            height: 500
+        };
+
+        function postHeight() {
+            var new_height = ConvertKitWrap.scrollHeight;
+            if (new_height > 300) {
+                post_message.height = new_height;
+            }
+            window.parent.postMessage(post_message, '*');
+        }
+
+        function getQueryVariable(name) {
+            var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        }
+        (function () {
+            var d = document,
+                s = d.createElement('script');
+            s.src = getQueryVariable('url');
+            s.setAttribute('data-uid', getQueryVariable('uid'));
+            ConvertKitWrap.appendChild(s);
+        })();
+    </script>
+</body>
+
+</html>
